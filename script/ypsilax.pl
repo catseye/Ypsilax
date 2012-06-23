@@ -1,46 +1,74 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 # ypsilax.pl - non-deterministic reflective grid-rewriting language
-# v2001.02.19 Chris Pressey, Cat's Eye Technologies
+# v2007.1202 Chris Pressey, Cat's Eye Technologies
 
-# Copyright (c)2001, Cat's Eye Technologies.
+# Copyright (c)2001-2007, Cat's Eye Technologies.
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
-# 
-#   Redistributions of source code must retain the above copyright
-#   notice, this list of conditions and the following disclaimer.
-# 
-#   Redistributions in binary form must reproduce the above copyright
-#   notice, this list of conditions and the following disclaimer in
-#   the documentation and/or other materials provided with the
-#   distribution.
-# 
-#   Neither the name of Cat's Eye Technologies nor the names of its
-#   contributors may be used to endorse or promote products derived
-#   from this software without specific prior written permission. 
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-# CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
-# OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE. 
+#
+#  1. Redistributions of source code must retain the above copyright
+#     notices, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notices, this list of conditions, and the following disclaimer in
+#     the documentation and/or other materials provided with the
+#     distribution.
+#  3. Neither the names of the copyright holders nor the names of their
+#     contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE
+# COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 ### BEGIN ypsilax.pl ###
 
-$|=1;
+use strict qw(vars refs subs);
 
-sub pick_random_rule
+# This allows us to keep Console::Virtual in same directory as script
+BEGIN { use File::Basename; push @INC, dirname($0); }
+
+# Uncomment these lines to use specific display/input/color drivers.
+# BEGIN { $Console::Virtual::setup{display} = 'ANSI'; }
+# BEGIN { $Console::Virtual::setup{input} = 'Teletype'; }
+# BEGIN { $Console::Virtual::setup{color} = 'ANSI16'; }
+
+use Console::Virtual 2007.1122
+     qw(getkey display gotoxy clrscr clreol
+        normal inverse bold update_display color);
+
+# This lets us do sub-second sleeps, if Time::HiRes is available.
+my $sleep = sub($) { sleep(shift); };
+my $found_time_hires = 0;
+foreach my $c (@INC)
+{
+  $found_time_hires = 1 if -r "$c/Time/HiRes.pm";
+}
+if ($found_time_hires) {
+  require Time::HiRes;
+  $sleep = sub($) { Time::HiRes::sleep(shift); };
+}
+
+### GLOBALS ###
+
+my $maxx = 0;
+my $maxy = 0;
+
+### SUBS ###
+
+sub pick_random_rule($)
 {
   my $playfield = shift;
   my $x; my $y;
@@ -54,7 +82,7 @@ sub pick_random_rule
   return [$x+1, $y+1, ($x2-$x)-1, int((($x2-$x)-1)/2), $playfield->{data}[$x2-1][$y]];
 }
 
-sub apply_rule_randomly
+sub apply_rule_randomly($$)
 {
   my $playfield = shift;
   my $rule = shift;
@@ -97,7 +125,7 @@ sub apply_rule_randomly
     {
       for($j = $y; $j < $y + $h; $j++)
       {
-        $q1 = $playfield->{data}[$i][$j];
+        my $q1 = $playfield->{data}[$i][$j];
         if ($q1 eq $wild and $wild ne ' ')
         {
         } else
@@ -110,11 +138,13 @@ sub apply_rule_randomly
   return [$match, $x+$dx, $y+$dy];
 }
 
-sub load_playfield
+sub load_playfield($)
 {
   my $filename = shift;
   my $playfield = {};
   my $line;
+  my $x = 0;
+  my $y = 0;
 
   open PLAYFIELD, $filename;
   while(defined($line = <PLAYFIELD>))
@@ -142,37 +172,68 @@ sub draw_playfield
 {
   my $playfield = shift;
   my $i; my $j;
-  # print "\e[2J";
-  print "Playfield $playfield->{width} x $playfield->{height}:\n";
+
+  gotoxy(1, 1);
+  display("Playfield $playfield->{width} x $playfield->{height}:");
+
+  gotoxy(1, 2);
   for($j = 0; $j <= $maxy; $j++)
   {
     for($i = 0; $i <= $maxx; $i++)
     {
-      print $playfield->{data}[$i][$j] || ' ';
+      display($playfield->{data}[$i][$j] || ' ');
     }
-    print "\n";
+    gotoxy(1, $j+3);
   }
-  # print "Press enter: "; <STDIN>;
+}
+
+sub debug($)
+{
+  #gotoxy(1, 24);
+  #display(shift);
 }
 
 ### MAIN ###
 
+my $playfield;
+my $turn = 0;
+my $done = 0;
+my $delay = 100;
+
+while ($ARGV[0] =~ /^\-\-?(.*?)$/)
+{
+  my $opt = $1;
+  shift @ARGV;
+  if ($opt eq 'delay')
+  {
+    $delay = 0+shift @ARGV;
+  }
+  else
+  {
+    die "Unknown command-line option --$opt";
+  }
+}
+
+clrscr();
+color('white', 'black');
+
 srand(time());
-$playfield = load_playfield($ARGV[0]);
+my $playfield = load_playfield($ARGV[0]);
 draw_playfield($playfield);
 
-$turn = 0;
 while (not $done)
 {
-  $rule = pick_random_rule($playfield);
-  # print "Found ($rule->[2] X $rule->[3]) rule \@ ($rule->[0], $rule->[1])\n";
-  $result = apply_rule_randomly($playfield, $rule);
-  # print "Matched $result->[0] times \@ ($result->[1], $result->[2])\n";
+  my $rule = pick_random_rule($playfield);
+  debug "Found ($rule->[2] X $rule->[3]) rule \@ ($rule->[0], $rule->[1])";
+  my $result = apply_rule_randomly($playfield, $rule);
+  debug "Matched $result->[0] times \@ ($result->[1], $result->[2])";
   if ($result->[0])
   {
     draw_playfield($playfield);
+    update_display();
+    &$sleep($delay / 1000);
   }
-  print "$turn reductions... " if ++$turn % 1000 == 0;
+  debug "$turn reductions... " if ++$turn % 1000 == 0;
 }
 
 ### END of ypsilax.pl ###

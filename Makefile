@@ -9,7 +9,7 @@ JFLAGS?=-Xlint:deprecation -Xlint:unchecked
 CDIR=bin/tc/catseye/ypsilax
 CLASSES=$(CDIR)/YpsilaxState.class
 
-YOOBDIR?=../../../lab/yoob
+YOOBDIR?=../yoob
 CLASSPATH?=bin$(PATHSEP)$(YOOBDIR)/bin
 
 all: $(CLASSES)

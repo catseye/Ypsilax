@@ -37,8 +37,14 @@
 
 use strict qw(vars refs subs);
 
-# This allows us to keep Console::Virtual in same directory as script
-BEGIN { use File::Basename; push @INC, dirname($0); }
+# This allows us to keep Console::Virtual in a subrepo located in
+# the lib dir of this project
+BEGIN
+{
+  use File::Spec::Functions;
+  use File::Basename;
+  push @INC, catdir(dirname($0), '..', 'lib', 'console-virtual');
+}
 
 # Uncomment these lines to use specific display/input/color drivers.
 # BEGIN { $Console::Virtual::setup{display} = 'ANSI'; }

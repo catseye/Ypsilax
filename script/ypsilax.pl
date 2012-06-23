@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 
 # ypsilax.pl - non-deterministic reflective grid-rewriting language
-# v1.0-2010.0429 Chris Pressey, Cat's Eye Technologies
+# v1.1-2011.0428 Chris Pressey, Cat's Eye Technologies
 
-# Copyright (c)2001-2010, Cat's Eye Technologies.
+# Copyright (c)2001-2011, Cat's Eye Technologies.
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without

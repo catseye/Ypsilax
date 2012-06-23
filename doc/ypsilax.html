@@ -8,28 +8,13 @@
 
 <h1>Ypsilax</h1>
 
-<p>Language version 1.0, distribution revision 2010.0429.<br/>
-Copyright &copy;2001-2010, Cat's Eye Technologies.  All rights reserved.</p>
+<p>Language version 1.1, distribution revision 2011.0428.<br/>
+Copyright &copy;2001-2011, Cat's Eye Technologies.  All rights reserved.</p>
 
-<hr/>
-
-<blockquote><p><i>"In other words then, if a machine is expected to be infallible, it
-cannot also be intelligent. There are several mathematical theorems which say almost
-exactly that. But these theorems say nothing about how much intelligence may be
-displayed if a machine makes no pretense at infallibility."</i></p>
-<p style="text-align: right">&mdash; Grush and Churchland, <i>Gaps in Penrose's Toilings</i></p></blockquote>
-<blockquote><p><i>"You know, I'm starting to think the humour of that misquote at the top
-of the Ypsilax documentation is a bit</i> too <i>subtle."</i></p>
-<p style="text-align: right">&mdash; Chris Pressey, <i>Ypsilax</i> documentation</p></blockquote>
-
-<h3>Ypsilax</h3>
+<h3>Overview</h3>
 
 <p><b>Ypsilax</b> is a minimal, non-deterministic, reflective, two-dimensional
-grid-rewriting language.</p>
-
-<h3>Notes</h3>
-
-<p>Ypsilax is a descendent of Zirgulax, which was an earlier but
+grid-rewriting language.  Ypsilax is a descendent of Zirgulax, which was an earlier but
 similar idea which used a hexnet instead of a grid.</p>
 
 <p>An Ypsilax source file is One Big Playfield.  This playfield is not
@@ -89,10 +74,15 @@ as 'define rule'; however they do prevent rewrites on the cells
 immediately below them.</p>
 
 <p>Finally, Ypsilax just wouldn't be a proper constraint-based language
-without some form of pattern-matching.  The wildcard character in
-Ypsilax is the question mark.  When a question mark appears in the left-hand
-side of a rule (the pattern,) it will match any character during a rewrite, not
-just another question mark.  On the right-hand side of the rule (the substitution,)
-it acts just as any other literal character.</p>
+without some form of pattern-matching.  (<em>In 1.1: Updated to agree with
+existing implementation and examples</em>)
+The wildcard character in any given rule is whatever character appears just
+to the left of the <code>)</code> that delimits that rule on the right,
+as long as that character is not blank space.
+Whereever this character appears in the left-hand side of the rule (the pattern,)
+it will match any character during a rewrite, not just another of its own kind.
+Whereever this character appears in the right-hand side of the rule (the substitution,)
+it will not replace the corresponding character in the playfield when a substitution
+is made.  That character in the playfield will remain unchanged.</p>
 
 </body></html>

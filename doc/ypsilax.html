@@ -1,0 +1,102 @@
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html;CHARSET=iso-8859-1">
+    <meta name="Description" content="Cat's Eye Technologies: The Ypsilax Language">
+    <title>Cat's Eye Technologies: The Ypsilax Language</title>
+<meta name="Keywords" content=" Cat's Eye Technologies Language
+ Programming computational computation non-deterministic
+ constraint-based rewriting grid grid-rewriting gridrewriting
+ minimal minimalist minimalistic tarpit tar pit pure language
+ nondeterminstic experimental ">
+</head>
+<body>
+<center>
+<h1>Ypsilax</h1>
+</center>
+<p><font size=-1>&nbsp;<img src="/images/icons/copyright.gif"
+   align=absmiddle width=12 height=12 alt="(c)" border=0>2001-2004 <a href="/">Cat's Eye Technologies</a>.  All rights reserved.<br>
+    This software is OSI Certified Open Source Software.<br>
+    OSI Certified is a certification mark of the <a href="http://www.opensource.org/"><img src="/images/icons/webicon.gif" alt="[WWW]" border=0 width=12 height=12>Open Source Initiative</a>.<br>
+    See the file <a href="license.txt">license.txt</a> for license information.</font>
+<hr>
+<p>
+<ul><i>"In other words then, if a machine is expected to be infallible, it
+cannot also be intelligent. There are several mathematical theorems which say almost
+exactly that. But these theorems say nothing about how much intelligence may be
+displayed if a machine makes no pretense at infallibility."</i>
+<ul>--- Grush and Churchland, <i>Gaps in Penrose's Toilings</i>
+</ul></ul>
+
+<h3>Ypsilax</h3>
+
+<p><b>Ypsilax</b> is a minimal, non-deterministic, reflective, two-dimensional
+grid-rewriting language.</p>
+
+<h3>Notes</h3>
+
+<p>Ypsilax is a descendent of Zirgulax, which was an earlier but
+similar idea which used a hexnet instead of a grid.</p>
+
+<p>An Ypsilax source file is One Big Playfield.  This playfield is not
+semantically symmetrical; things closer to the 'top' of the playfield have a higher
+'precendence' than the things close to the 'bottom'.  (I experimented
+with colours and boundaries, and found having a 'sloping' playfield was
+much easier to implement.)</p>
+
+<p>[Implementation note.   The source for the reference implementation
+is only about 5K of Perl code, and much of that is taken up by the license!]</p>
+
+<p>A rewriting rule in Ypsilax looks like this:</p>
+
+<pre>  (  )
+   AB
+</pre>
+
+<p>Rules are always twice as wide as they are high.  This particular rule, which is
+two cells wide by one cell high, says that it is OK to replace any A found
+below this rule with a B.</p>
+
+<p>Ypsilax is totally non-determinstic, like <a href="/projects/thue-+">Thue</a>.
+Each reduction consists of picking a rule by an unspecified method -
+for all you know, it is selected completely at random - and attempting to apply
+it to some part of the playfield below the rule, again chosen by means unknown.
+When this suceeds, that part of the playfield is rewritten.</p>
+
+<p>[Implementation note: in fact, the reference implementation does indeed select rules
+and places to apply them using Perl's pseudo-random number generator.  Also, the
+interpreter  dumps an image of the playfield to <tt>stdout</tt> whenever a rewrite
+occurs, for some jolly good entertainment, but this is not specified as part of the language
+semantics proper.]</p>
+
+<p>Ypsilax is reflective.  This means that you can write rules which rewrite
+other rules.  For example, you could write the following rule above the
+previously noted rule, which would rewrite it:</p>
+
+<pre>  (        )
+   (  )(  )
+    AB  CD
+</pre>
+
+<p>Note that this rule is, in fact, four cells high, as it is eight cells across.</p>
+
+<p>However, there is nothing stopping these 'embedded' rules
+from also being randomly picked and applied by some rule that
+may occur above them.  To get around that
+we can 'escape' the rules-to-be-matched-instead-of-obeyed:</p>
+
+<pre>  (\   \   )
+   (  )(  )
+    AB  CD
+</pre>
+
+<p>The backslashes do not affect the semantics of the parentheses
+as 'define rule'; however they do prevent rewrites on the cells
+immediately below them.</p>
+
+<p>Finally, Ypsilax just wouldn't be a proper constraint-based language
+without some form of pattern-matching.  The wildcard character in
+Ypsilax is the question mark.  When a question mark appears in the left-hand
+side of a rule (the pattern,) it will match any character during a rewrite, not
+just another question mark.  On the right-hand side of the rule (the substitution,)
+it acts just as any other literal character.</p>
+
+</body></html>

@@ -85,7 +85,9 @@ sub pick_random_rule($)
   } until $playfield->{data}[$x][$y] eq '(' and ((not defined($playfield->{data}[$x][$y-1])) or $playfield->{data}[$x][$y-1] eq ' ' or $y == 0);
   my $x2 = $x;
   do { $x2++ } until $playfield->{data}[$x2][$y] eq ')';
-  return [$x+1, $y+1, ($x2-$x)-1, int((($x2-$x)-1)/2), $playfield->{data}[$x2-1][$y]];
+  my $wild = $playfield->{data}[$x2-1][$y];
+  $wild = ' ' if not defined($wild);
+  return [$x+1, $y+1, ($x2-$x)-1, int((($x2-$x)-1)/2), $wild];
 }
 
 sub apply_rule_randomly($$)
@@ -113,8 +115,10 @@ sub apply_rule_randomly($$)
   {
     for($j = $y; $j < $y + $h; $j++)
     {
-      my $q1 = $playfield->{data}[$i][$j] || ' ';
-      my $q2 = $playfield->{data}[$i+$dx][$j+$dy] || ' ';
+      my $q1 = $playfield->{data}[$i][$j];
+      $q1 = ' ' if not defined($q1);
+      my $q2 = $playfield->{data}[$i+$dx][$j+$dy];
+      $q2 = ' ' if not defined($q2);
       if ($q1 eq $wild and $wild ne ' ')
       {
       }
@@ -132,6 +136,7 @@ sub apply_rule_randomly($$)
       for($j = $y; $j < $y + $h; $j++)
       {
         my $q1 = $playfield->{data}[$i][$j];
+        $q1 = ' ' if not defined($q1);
         if ($q1 eq $wild and $wild ne ' ')
         {
         } else
@@ -187,7 +192,11 @@ sub draw_playfield
   {
     for($i = 0; $i <= $maxx; $i++)
     {
-      display($playfield->{data}[$i][$j] || ' ');
+      if (defined $playfield->{data}[$i][$j]) {
+        display($playfield->{data}[$i][$j]);
+      } else {
+        display(' ');
+      }
     }
     gotoxy(1, $j+3);
   }

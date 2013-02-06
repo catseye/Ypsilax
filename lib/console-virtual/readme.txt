@@ -1,7 +1,7 @@
 Console::Virtual
 ----------------
 
-v2007.1122 Chris Pressey, Cat's Eye Technologies.
+v2007.1122-YPSILAXDEV Chris Pressey, Cat's Eye Technologies.
 (c)2003-2007 Cat's Eye Technologies.  All rights reserved.
 (BSD-style license.  See file Console/Virtual.pm for full license info.)
 

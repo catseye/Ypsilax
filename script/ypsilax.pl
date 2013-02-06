@@ -36,6 +36,7 @@
 ### BEGIN ypsilax.pl ###
 
 use strict qw(vars refs subs);
+#use warnings;
 
 # This allows us to keep Console::Virtual in a subrepo located in
 # the lib dir of this project
@@ -69,6 +70,8 @@ if ($found_time_hires) {
 
 ### GLOBALS ###
 
+my $usage = "Usage: $0 [--debug] [--delay MSEC] playfield.yps\n";
+my $debug = 0;
 my $maxx = 0;
 my $maxy = 0;
 
@@ -77,12 +80,17 @@ my $maxy = 0;
 sub pick_random_rule($)
 {
   my $playfield = shift;
-  my $x; my $y;
+  my $x; my $y; my $tries = 0;
   do
   {
     $x = int(rand(1) * $playfield->{width});
     $y = int(rand(1) * $playfield->{height});
-  } until $playfield->{data}[$x][$y] eq '(' and ((not defined($playfield->{data}[$x][$y-1])) or $playfield->{data}[$x][$y-1] eq ' ' or $y == 0);
+    return undef if ++$tries > 2000;
+  } until $playfield->{data}[$x][$y] eq '(' and (
+            (not defined($playfield->{data}[$x][$y-1])) or
+            $playfield->{data}[$x][$y-1] eq ' ' or
+            $y == 0
+          );
   my $x2 = $x;
   do { $x2++ } until $playfield->{data}[$x2][$y] eq ')';
   my $wild = $playfield->{data}[$x2-1][$y];
@@ -108,12 +116,10 @@ sub apply_rule_randomly($$)
     $dy = int(rand(1) * ($playfield->{height})) - $y;
   } until $dy > 0;
 
-  my $i; my $j;
-
   my $match = 1;
-  for($i = $x; $i < $x + $h; $i++)
+  for(my $i = $x; $i < $x + $h; $i++)
   {
-    for($j = $y; $j < $y + $h; $j++)
+    for(my $j = $y; $j < $y + $h; $j++)
     {
       my $q1 = $playfield->{data}[$i][$j];
       $q1 = ' ' if not defined($q1);
@@ -131,9 +137,9 @@ sub apply_rule_randomly($$)
 
   if ($match)
   {
-    for($i = $x + $h; $i < $x + $w; $i++)
+    for(my $i = $x + $h; $i < $x + $w; $i++)
     {
-      for($j = $y; $j < $y + $h; $j++)
+      for(my $j = $y; $j < $y + $h; $j++)
       {
         my $q1 = $playfield->{data}[$i][$j];
         $q1 = ' ' if not defined($q1);
@@ -157,7 +163,7 @@ sub load_playfield($)
   my $x = 0;
   my $y = 0;
 
-  open PLAYFIELD, $filename;
+  open PLAYFIELD, $filename or die "Can't open $filename, stopped";
   while(defined($line = <PLAYFIELD>))
   {
     my $i;
@@ -204,8 +210,11 @@ sub draw_playfield
 
 sub debug($)
 {
-  #gotoxy(1, 24);
-  #display(shift);
+  if ($debug) {
+    gotoxy(1, 24);
+    display(shift);
+    clreol;
+  }
 }
 
 ### MAIN ###
@@ -215,7 +224,7 @@ my $turn = 0;
 my $done = 0;
 my $delay = 100;
 
-while ($ARGV[0] =~ /^\-\-?(.*?)$/)
+while ($ARGV[0] =~ /^\-\-(.*?)$/)
 {
   my $opt = $1;
   shift @ARGV;
@@ -223,9 +232,13 @@ while ($ARGV[0] =~ /^\-\-?(.*?)$/)
   {
     $delay = 0+shift @ARGV;
   }
+  elsif ($opt eq 'debug')
+  {
+    $debug = 1;
+  }
   else
   {
-    die "Unknown command-line option --$opt";
+    die $usage . "Unknown command-line option --$opt, stopped";
   }
 }
 
@@ -233,22 +246,31 @@ clrscr();
 color('white', 'black');
 
 srand(time());
+if ($#ARGV != 0) {
+  die $usage . "Need exactly one playfield filename, stopped";
+}
 my $playfield = load_playfield($ARGV[0]);
 draw_playfield($playfield);
 
 while (not $done)
 {
   my $rule = pick_random_rule($playfield);
-  debug "Found ($rule->[2] X $rule->[3]) rule \@ ($rule->[0], $rule->[1])";
-  my $result = apply_rule_randomly($playfield, $rule);
-  debug "Matched $result->[0] times \@ ($result->[1], $result->[2])";
-  if ($result->[0])
-  {
+  if (defined $rule) {
+    debug "Found ($rule->[2] X $rule->[3]) rule \@ ($rule->[0], $rule->[1])";
+    my $result = apply_rule_randomly($playfield, $rule);
+    debug "Matched $result->[0] times \@ ($result->[1], $result->[2])";
+    if ($result->[0] > 0) {
+      draw_playfield($playfield);
+      update_display();
+      &$sleep($delay / 1000);
+    }
+  }
+  if (++$turn % 1000 == 0) {
+    debug "$turn reductions... ";
     draw_playfield($playfield);
     update_display();
     &$sleep($delay / 1000);
-  }
-  debug "$turn reductions... " if ++$turn % 1000 == 0;
+  }    
 }
 
 ### END of ypsilax.pl ###

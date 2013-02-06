@@ -48,6 +48,14 @@ BEGIN
 
   cbreak; # optimistic
   noecho; # optimistic
+
+  $::SIG{__DIE__} = sub($) {
+    my $msg = shift;
+    nocbreak;
+    echo;
+    endwin;
+    die $msg;
+  }
 }
 
 sub getkey

@@ -1,7 +1,7 @@
 Ypsilax
 =======
 
-Language version 1.1, distribution revision 2012.0916.  
+Language version 1.1, distribution revision 2012.0916-DEV.  
 Copyright ©2001-2012, Cat's Eye Technologies. All rights reserved.
 
 ### Overview

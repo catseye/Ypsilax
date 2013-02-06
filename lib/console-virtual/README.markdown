@@ -1,9 +1,9 @@
 Console::Virtual
-----------------
+================
 
-v2007.1122-YPSILAXDEV Chris Pressey, Cat's Eye Technologies.
-(c)2003-2007 Cat's Eye Technologies.  All rights reserved.
-(BSD-style license.  See file Console/Virtual.pm for full license info.)
+v2007.1122-YPSILAXDEV Chris Pressey, Cat's Eye Technologies.  
+(c)2003-2007 Cat's Eye Technologies.  All rights reserved.  
+(BSD-style license.  See file `Console/Virtual.pm` for full license info.)
 
 What is Console::Virtual?
 -------------------------
@@ -39,15 +39,15 @@ all of its contents to e.g. /usr/local/lib/perl5/site_perl/5.005), or
 alternately, give Perl a new include path which contains the Console
 directory.  As usual, there is more than one way to do this: you can
 pass the -I flag to the perl executable, or you can add a line like
-BEGIN { push @INC, $dir } to your script.  If you want to just keep the
+`BEGIN { push @INC, $dir }` to your script.  If you want to just keep the
 Console directory in the same directory as your script, you can add
-BEGIN { use File::Basename; push @INC, dirname($0) } instead.
+`BEGIN { use File::Basename; push @INC, dirname($0) }` instead.
 
 Then you can insert the following into your Perl script to use it:
 
-  use Console::Virtual 2007.1122
-       qw(getkey display gotoxy clrscr clreol
-          normal inverse bold color update_display);
+    use Console::Virtual 2007.1122
+         qw(getkey display gotoxy clrscr clreol
+            normal inverse bold color update_display);
 
 Console::Virtual first tries to use Curses, if it's installed.  If not, and
 it detects that it's running on a Win32 system, it tries to use
@@ -84,19 +84,19 @@ fully qualify them (like Console::Virtual::gotoxy()) to use them.
 
 Input Functions:
 
-  getkey()          wait for keystroke; don't wait for ENTER or echo
+    getkey()          wait for keystroke; don't wait for ENTER or echo
 
 Output Functions:
 
-  clrscr()          clear the screen
-  clreol()          clear to end of line
-  display(@list)    display all strings in @list at screen cursor
-  gotoxy($x,$y)     move the cursor to the 1-based (x,y) coordinate
-  bold()            set display style to bold
-  inverse()         set display style to inverted
-  normal()          set display style back to normal
-  update_display()  explicitly refresh the screen (Curses & Teletype need this)
-  color($f,$b)      sets the colors of text about to be displayed
+    clrscr()          clear the screen
+    clreol()          clear to end of line
+    display(@list)    display all strings in @list at screen cursor
+    gotoxy($x,$y)     move the cursor to the 1-based (x,y) coordinate
+    bold()            set display style to bold
+    inverse()         set display style to inverted
+    normal()          set display style back to normal
+    update_display()  explicitly refresh the screen (Curses & Teletype need this)
+    color($f,$b)      sets the colors of text about to be displayed
 
 Acceptable arguments for $f and $b in color() are 'black', 'red', 'blue',
 'purple', 'green', 'brown', 'aqua', 'grey', 'pink', 'sky' (blue), 'magenta',
@@ -130,20 +130,22 @@ long upcoming delay in the program (e.g. intense computation.)
 History
 -------
 
-v2001.0123: Renamed this module to _Console::Virtual.
-v2001.0124: fixed some namespace issues w.r.t. Win32.
-v2001.0127: added Color subfunctionality.
-v2003.0325: fixed up test.pl and readme.txt (no changes to code)
-v2007.1122: renamed to Console::Virtual, prettied readme.txt.
-            Also updated language in BSD license (no "REGENTS".)
+-   v2001.0123: Renamed this module to _Console::Virtual.
+-   v2001.0124: fixed some namespace issues w.r.t. Win32.
+-   v2001.0127: added Color subfunctionality.
+-   v2003.0325: fixed up test.pl and readme.txt (no changes to code)
+-   v2007.1122: renamed to Console::Virtual, prettied readme.txt.
+    Also updated language in BSD license (no "REGENTS".)
+-   v2007.1122-YPSILAXDEV: made `die` turn off Curses before dying.
+    (will give this a better version RSN)
 
 More Information
 ----------------
 
 The latest version of Console::Virtual can be found at:
 
-  http://catseye.webhop.net/projects/cons_virt/
+    https://github.com/catseye/Console-Virtual
 
-Chris Pressey
-November 22, 2007
+Chris Pressey  
+November 22, 2007  
 Chicago, Illinois, USA

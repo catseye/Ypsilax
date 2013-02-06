@@ -1,5 +1,5 @@
 # Console::Virtual.pm - unbuffered-input/addressed-display layer
-# v2007.1122 Chris Pressey, Cat's Eye Technologies
+# v2007.1122-YPSILAXDEV Chris Pressey, Cat's Eye Technologies
 
 # Copyright (c)2003-2007, Chris Pressey, Cat's Eye Technologies.
 # All rights reserved.
@@ -48,18 +48,17 @@ BEGIN
 
 BEGIN
 {
-  my $c;
-  my $fc = 0;  # found Curses.pm?
-  my $fs = 0;  # found Term::Screen?
-  my $fp = 0;  # found POSIX.pm?
-  my $ft = 0;  # found $TERM and /etc/termcap?
-  foreach $c (@INC)
+  my $found_curses = 0;      # found Curses.pm?
+  my $found_term_screen = 0; # found Term::Screen?
+  my $found_posix = 0;       # found POSIX.pm?
+  my $found_termcap = 0;     # found $TERM and /etc/termcap?
+  foreach my $path (@INC)
   {
-    $fc = 1 if -r "$c/Curses.pm";
-    $fs = 1 if -r "$c/Term/Screen.pm";
-    $fp = 1 if -r "$c/POSIX.pm";
+    $found_curses = 1 if -r "$path/Curses.pm";
+    $found_term_screen = 1 if -r "$path/Term/Screen.pm";
+    $found_posix = 1 if -r "$path/POSIX.pm";
   }
-  $ft = $ENV{TERM} && -r "/etc/termcap";
+  $found_termcap = $ENV{TERM} && -r "/etc/termcap";
   $| = 1;
 
   # Determine raw input module to use.
@@ -68,33 +67,28 @@ BEGIN
 
   if (defined $setup{input})
   {
-    require "Console/Input/$setup{input}.pm";
   }
-  elsif ($fc)
+  elsif ($found_curses)
   {
-    require Console::Input::Curses;
     $setup{input} = 'Curses';
   }
   elsif ($^O eq 'MSWin32')
   {
-    require Console::Input::Win32;
     $setup{input} = 'Win32';
   }
-  elsif ($fs)
+  elsif ($found_term_screen)
   {
-    require Console::Input::Screen;
     $setup{input} = 'Screen';
   }
-  elsif ($fp)
+  elsif ($found_posix)
   {
-    require Console::Input::POSIX;
     $setup{input} = 'POSIX';
   } else
   {
     warn "Warning! Raw input probably not available on this '$^O' system.\n";
-    require Console::Input::Teletype;
     $setup{input} = 'Teletype';
   }
+  require "Console/Input/$setup{input}.pm";
 
   # Determine screen-addressed output method to use.
   # This can be pre-set by the calling code
@@ -102,33 +96,28 @@ BEGIN
 
   if (defined $setup{display})
   {
-    require "Console/Display/$setup{display}.pm";
   }
-  elsif ($fc)
+  elsif ($found_curses)
   {
-    require Console::Display::Curses;
     $setup{display} = 'Curses';
   }
   elsif ($^O eq 'MSWin32')
   {
-    require Console::Display::Win32;
     $setup{display} = 'Win32';
   }
-  elsif ($fs)
+  elsif ($found_term_screen)
   {
-    require Console::Display::Screen;
     $setup{display} = 'Screen';
   }
-  elsif ($ft)
+  elsif ($found_termcap)
   {
-    require Console::Display::Tput;
     $setup{display} = 'Tput';
   } else
   {
     warn "Addressable screen must be emulated on this '$^O' system";
-    require Console::Display::Teletype;
     $setup{display} = 'Teletype';
   }
+  require "Console/Display/$setup{display}.pm";
 
   # 2001.01.27 CAP
   # Determine color module to use.
@@ -137,29 +126,25 @@ BEGIN
 
   if (defined $setup{color})
   {
-    require "Console/Color/$setup{color}.pm";
   }
-  elsif ($fc)
+  elsif ($found_curses)
   {
-    require Console::Color::Curses;
     $setup{color} = 'Curses';
   }
   elsif ($^O eq 'MSWin32')
   {
-    require Console::Color::Win32;
     $setup{color} = 'Win32';
   }
-  elsif ($fs)
+  elsif ($found_term_screen)
   {
-    # require Console::Color::Screen;  # TODO! needs to be written
-    require Console::Color::ANSI16;    # not a very general solution
-    $setup{color} = 'ANSI16';
+    # $setup{color} = 'Screen';    # TODO! needs to be written
+    $setup{color} = 'ANSI16';      # not a very general solution
   }
   else
   {
-    require Console::Color::Mono;
     $setup{color} = 'Mono';
   }
+  require "Console/Color/$setup{color}.pm";
 }
 
 1;

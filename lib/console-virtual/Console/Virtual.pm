@@ -41,7 +41,8 @@ BEGIN
   @ISA = qw(Exporter);
   @EXPORT_OK = qw(&display &clrscr &clreol &gotoxy
                   &bold &inverse &normal
-                  &update_display &getkey &color);
+                  &update_display &getkey &color
+                  &vsleep);
 }
 
 %setup = ();
@@ -145,6 +146,21 @@ BEGIN
     }
   }
   require "Console/Color/$setup{color}.pm";
+}
+
+# This lets us do sub-second sleeps, if Time::HiRes is available.
+my $sleep = sub($) { sleep(shift); };
+my $found_time_hires = 0;
+foreach my $c (@INC)
+{
+  $found_time_hires = 1 if -r "$c/Time/HiRes.pm";
+}
+if ($found_time_hires) {
+  require Time::HiRes;
+  $sleep = sub($) { Time::HiRes::sleep(shift); };
+}
+sub vsleep($) {
+  &$sleep($_[0]);
 }
 
 1;

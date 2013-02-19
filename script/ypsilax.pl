@@ -54,19 +54,8 @@ BEGIN
 
 use Console::Virtual 2007.1122
      qw(getkey display gotoxy clrscr clreol
-        normal inverse bold update_display color);
-
-# This lets us do sub-second sleeps, if Time::HiRes is available.
-my $sleep = sub($) { sleep(shift); };
-my $found_time_hires = 0;
-foreach my $c (@INC)
-{
-  $found_time_hires = 1 if -r "$c/Time/HiRes.pm";
-}
-if ($found_time_hires) {
-  require Time::HiRes;
-  $sleep = sub($) { Time::HiRes::sleep(shift); };
-}
+        normal inverse bold update_display color
+        vsleep);
 
 ### GLOBALS ###
 
@@ -262,14 +251,14 @@ while (not $done)
     if ($result->[0] > 0) {
       draw_playfield($playfield);
       update_display();
-      &$sleep($delay / 1000);
+      vsleep($delay / 1000);
     }
   }
   if (++$turn % 1000 == 0) {
     debug "$turn reductions... ";
     draw_playfield($playfield);
     update_display();
-    &$sleep($delay / 1000);
+    vsleep($delay / 1000);
   }    
 }
 

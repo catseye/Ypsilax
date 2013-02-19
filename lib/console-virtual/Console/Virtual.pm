@@ -1,7 +1,7 @@
 # Console::Virtual.pm - unbuffered-input/addressed-display layer
-# v2007.1122-YPSILAXDEV Chris Pressey, Cat's Eye Technologies
+# version 2.0 (February 2013)
 
-# Copyright (c)2003-2007, Chris Pressey, Cat's Eye Technologies.
+# Copyright (c)2003-2013, Chris Pressey, Cat's Eye Technologies.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ BEGIN
   use 5;
   use strict qw(subs);
   use Exporter;
-  $VERSION = 2007.1122;
+  $VERSION = 2.0;
   @ISA = qw(Exporter);
   @EXPORT_OK = qw(&display &clrscr &clreol &gotoxy
                   &bold &inverse &normal

@@ -52,7 +52,7 @@ BEGIN
 # BEGIN { $Console::Virtual::setup{input} = 'Teletype'; }
 # BEGIN { $Console::Virtual::setup{color} = 'ANSI16'; }
 
-use Console::Virtual 2007.1122
+use Console::Virtual 2.0
      qw(getkey display gotoxy clrscr clreol
         normal inverse bold update_display color
         vsleep);

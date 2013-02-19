@@ -147,10 +147,16 @@ Alas, this plays havoc with logic that tries to decide which version of a
 package is more recent than another, as `2007.1122` > `2.0`.  However, there
 are two things that soften the blow:
 
-*   I don't think anyone actually uses this module.  Hooray!
+*   A local copy of this module ships with all Cat's Eye Technologies
+    projects that rely on it.
+*   I don't think anyone else actually uses this module.  Hooray!
 *   The `vsleep` function was introduced in 2.0.  To ensure that you
     are really getting version 2.x or later, import `vsleep` in your
     `use Console::Virtual 2.0`.
+
+But if you are saying `use Console::Virtual 2007.1122` in your script and
+you want to use the new 2.0 version, you will have to change the version
+number in that line.
 
 History
 -------

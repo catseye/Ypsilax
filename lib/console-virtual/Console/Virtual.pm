@@ -65,28 +65,28 @@ BEGIN
   # This can be pre-set by the calling code
   # by modifying %Console::Virtual::setup.
 
-  if (defined $setup{input})
+  if (not defined $setup{input})
   {
-  }
-  elsif ($found_curses)
-  {
-    $setup{input} = 'Curses';
-  }
-  elsif ($^O eq 'MSWin32')
-  {
-    $setup{input} = 'Win32';
-  }
-  elsif ($found_term_screen)
-  {
-    $setup{input} = 'Screen';
-  }
-  elsif ($found_posix)
-  {
-    $setup{input} = 'POSIX';
-  } else
-  {
-    warn "Warning! Raw input probably not available on this '$^O' system.\n";
-    $setup{input} = 'Teletype';
+    if ($found_curses)
+    {
+      $setup{input} = 'Curses';
+    }
+    elsif ($^O eq 'MSWin32')
+    {
+      $setup{input} = 'Win32';
+    }
+    elsif ($found_term_screen)
+    {
+      $setup{input} = 'Screen';
+    }
+    elsif ($found_posix)
+    {
+      $setup{input} = 'POSIX';
+    } else
+    {
+      warn "Warning! Raw input probably not available on this '$^O' system.\n";
+      $setup{input} = 'Teletype';
+    }
   }
   require "Console/Input/$setup{input}.pm";
 
@@ -94,28 +94,28 @@ BEGIN
   # This can be pre-set by the calling code
   # by modifying %Console::Virtual::setup.
 
-  if (defined $setup{display})
+  if (not defined $setup{display})
   {
-  }
-  elsif ($found_curses)
-  {
-    $setup{display} = 'Curses';
-  }
-  elsif ($^O eq 'MSWin32')
-  {
-    $setup{display} = 'Win32';
-  }
-  elsif ($found_term_screen)
-  {
-    $setup{display} = 'Screen';
-  }
-  elsif ($found_termcap)
-  {
-    $setup{display} = 'Tput';
-  } else
-  {
-    warn "Addressable screen must be emulated on this '$^O' system";
-    $setup{display} = 'Teletype';
+    if ($found_curses)
+    {
+      $setup{display} = 'Curses';
+    }
+    elsif ($^O eq 'MSWin32')
+    {
+      $setup{display} = 'Win32';
+    }
+    elsif ($found_term_screen)
+    {
+      $setup{display} = 'Screen';
+    }
+    elsif ($found_termcap)
+    {
+      $setup{display} = 'Tput';
+    } else
+    {
+      warn "Addressable screen must be emulated on this '$^O' system";
+      $setup{display} = 'Teletype';
+    }
   }
   require "Console/Display/$setup{display}.pm";
 
@@ -124,25 +124,25 @@ BEGIN
   # This can be pre-set by the calling code
   # by modifying %Console::Virtual::setup.
 
-  if (defined $setup{color})
+  if (not defined $setup{color})
   {
-  }
-  elsif ($found_curses)
-  {
-    $setup{color} = 'Curses';
-  }
-  elsif ($^O eq 'MSWin32')
-  {
-    $setup{color} = 'Win32';
-  }
-  elsif ($found_term_screen)
-  {
-    # $setup{color} = 'Screen';    # TODO! needs to be written
-    $setup{color} = 'ANSI16';      # not a very general solution
-  }
-  else
-  {
-    $setup{color} = 'Mono';
+    if ($found_curses)
+    {
+      $setup{color} = 'Curses';
+    }
+    elsif ($^O eq 'MSWin32')
+    {
+      $setup{color} = 'Win32';
+    }
+    elsif ($found_term_screen)
+    {
+      # $setup{color} = 'Screen';    # TODO! needs to be written
+      $setup{color} = 'ANSI16';      # not a very general solution
+    }
+    else
+    {
+      $setup{color} = 'Mono';
+    }
   }
   require "Console/Color/$setup{color}.pm";
 }

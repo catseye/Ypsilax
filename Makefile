@@ -16,7 +16,10 @@ CLASSES=$(CDIR)/YpsilaxState.class
 YOOBDIR?=../yoob
 CP?=bin$(PATHSEP)$(YOOBDIR)/bin
 
-all: $(CLASSES)
+all:
+	@echo "Java classes are not built by default.  Run 'make java' to build them."
+
+java: $(CLASSES)
 
 $(CDIR)/YpsilaxState.class: src/YpsilaxState.java
 	$(JAVAC) $(JFLAGS) -cp "$(CP)" -d bin src/YpsilaxState.java

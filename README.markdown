@@ -1,10 +1,10 @@
 Ypsilax
 =======
 
-Language version 1.1, distribution revision 2012.0916-DEV.  
-Copyright ©2001-2012, Cat's Eye Technologies. All rights reserved.
+Language version 1.1, distribution revision 2014.0525
 
-### Overview
+Overview
+--------
 
 **Ypsilax** is a minimal, non-deterministic, reflective, two-dimensional
 grid-rewriting language. Ypsilax is a descendent of Zirgulax, which was
@@ -35,7 +35,7 @@ it is selected completely at random — and attempting to apply it to some
 part of the playfield below the rule, again chosen by means unknown.
 When this suceeds, that part of the playfield is rewritten.
 
-[Thue]: http://catseye.tc/projects/thue/
+[Thue]: http://catseye.tc/node/Thue/
 
 [Implementation note: in fact, the reference implementation does indeed
 select rules and places to apply them using Perl's pseudo-random number
@@ -78,3 +78,11 @@ not just another of its own kind. Whereever this character appears in
 the right-hand side of the rule (the substitution,) it will not replace
 the corresponding character in the playfield when a substitution is
 made. That character in the playfield will remain unchanged.
+
+License
+-------
+
+Copyright ©2001-2014, Chris Pressey, Cat's Eye Technologies.
+All rights reserved.
+
+Distributed under a BSD-style license; see `LICENSE` for more information.

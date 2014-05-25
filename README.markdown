@@ -35,7 +35,7 @@ it is selected completely at random — and attempting to apply it to some
 part of the playfield below the rule, again chosen by means unknown.
 When this suceeds, that part of the playfield is rewritten.
 
-[Thue]: http://catseye.tc/node/Thue/
+[Thue]: http://catseye.tc/node/Thue
 
 [Implementation note: in fact, the reference implementation does indeed
 select rules and places to apply them using Perl's pseudo-random number

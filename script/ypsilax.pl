@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # ypsilax.pl - non-deterministic reflective grid-rewriting language
 # v1.1-2014.0525 Chris Pressey, Cat's Eye Technologies

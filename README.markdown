@@ -86,3 +86,9 @@ Copyright ©2001-2014, Chris Pressey, Cat's Eye Technologies.
 All rights reserved.
 
 Distributed under a BSD-style license; see `LICENSE` for more information.
+
+Other Implementations
+---------------------
+
+There is also a public-domain implementaion of Ypsilax in Java included
+in [the yoob distribution](https://github.com/catseye/yoob).

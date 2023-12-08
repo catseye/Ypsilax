@@ -35,7 +35,7 @@ it is selected completely at random — and attempting to apply it to some
 part of the playfield below the rule, again chosen by means unknown.
 When this suceeds, that part of the playfield is rewritten.
 
-[Thue]: http://catseye.tc/node/Thue
+[Thue]: https://esolangs.org/wiki/Thue
 
 [Implementation note: in fact, the reference implementation does indeed
 select rules and places to apply them using Perl's pseudo-random number
@@ -90,5 +90,5 @@ Distributed under a BSD-style license; see `LICENSE` for more information.
 Other Implementations
 ---------------------
 
-There is also a public-domain implementaion of Ypsilax in Java included
-in [the yoob distribution](https://github.com/catseye/yoob).
+There is also a public-domain implementation of Ypsilax in Java included
+in [the yoob distribution](https://catseye.tc/distribution/yoob_distribution).
